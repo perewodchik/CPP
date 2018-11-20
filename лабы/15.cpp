@@ -2,7 +2,6 @@
 #include <string>
 #include <locale>
 #include <vector>
-#include <windows.h>
 #include <algorithm>
 #define RUSSIAN_VOWEL_QUANTITY 20
 #define RUSSIAN_CONSONANTS 10
@@ -22,16 +21,16 @@ void shift_right(string &word, int &index);
 void double_consonants(vector<string> &words);
 void reverse_words(vector<string> &words);
 void output(const vector<string> &words);
-
+void input(vector<string> &words);
 
 int main()
 {
 	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+	ios_base::sync_with_stdio(0);
 	setlocale(LC_ALL,"");
 	vector<string> words;
-	string input;
-	while(cin >> input)
-		words.push_back(input);
+	input(words);
 	if(!same_words(words))
 		sort(words.rbegin(), words.rend());
 	else
@@ -41,8 +40,22 @@ int main()
 		reverse_words(words);
 	}
 	output(words);
-	
 	return 0;
+}
+
+void input(vector<string> &words)
+{
+	string symbols;
+	string word;
+	while( cin >> symbols )
+	{
+		word = "";
+		for(int i = 0; i < symbols.size(); i++)
+			if( (int) symbols[i] >= 'А' && (int) symbols[i] <= 'я')
+				word += symbols[i];
+		if(word != "")
+			words.push_back(word);
+	}
 }
 
 bool same_words(vector<string> &words)
@@ -54,10 +67,11 @@ bool same_words(vector<string> &words)
 	return false;
 }
 
+//Удаляет гласные из слов
 void remove_vowels(vector<string> &words)
 {
 	const static char russian_vowels[RUSSIAN_VOWEL_QUANTITY] = {
-		'A','Я','О','Ё','У','Ю','Ы','И','Э','Е',
+		'А','Я','О','Ё','У','Ю','Ы','И','Э','Е',
 		'а','я','о','ё','у','ю','ы','и','э','е'
 	};
 	
@@ -82,10 +96,11 @@ void shift_right(string &word, int &index)
 	index++;
 }
 
+//Удваивает глухие согласные
 void double_consonants(vector<string> &words)
 {
-	const static char russian_consonants[] = {
-		'п','ф','к','ш','с','т','х','ц','ч','ш'
+	const static char russian_consonants[RUSSIAN_CONSONANTS] = {
+		'п','ф','к','ш','с','т','х','ц','ч','щ'
 	};
 	for(int q = 0; q < words.size(); q++)
 		for(int i = 0; i < words[q].size(); i++)
@@ -103,6 +118,7 @@ void reverse_words(vector<string> &words)
 void output(const vector<string> &words)
 {
 	for(int i = 0; i < words.size(); i++)
-		cout << words[i] << endl;
+		if(words[i] != "") 
+			cout << words[i] << endl;
 }
 
